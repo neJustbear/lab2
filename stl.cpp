@@ -1,10 +1,11 @@
-﻿#include <iostream>
+#include <iostream>
 #include <chrono>
 #include <vector>
 #include <algorithm>
-using namespace std;
+#include <ctime>
+//using namespace std;
 
-void BubbleSort(vector<int>& vec, int size)
+void BubbleSort(std::vector<int> vec, int size)//size, 
 {
     int temp;
     for (int i = 0; i < size - 1; i++) {
@@ -18,48 +19,52 @@ void BubbleSort(vector<int>& vec, int size)
     }
 }
 
+//std::optional *time* clockFunc(std::function)
+//[](){}
+
 int main()
 {
     setlocale(LC_ALL, "rus");
-    vector <int> vec1;
-    vector <int> vec2;
+    std::vector <int> vec1;//list
+    std::vector <int> vec2;
     double size, count;
-    cout << "Введите размер вектора:\n";
-    cin >> size;
-    while (size != int(size) or cin.fail()) {
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(32767, '\n');
+    srand(time(0));
+    std::cout << "Введите размер вектора:\n";
+    std::cin >> size;
+    while (size != int(size) || std::cin.fail()) {//c style cast, or-
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(32767, '\n');
         }
-        cout << "Ошибка! Введите правильное число:" << endl;
-        cin >> size;
+        std::cout << "Ошибка! Введите правильное число:\n";
+        std::cin >> size;
     }
-    cout << "Введите значения\n";
+    std::cout << "Введите значения\n";
     for (int i = 0; i < size; i++) {
-        cin >> count;
-        while (cin.fail()) {
+        count = rand();
+        /*while (cin.fail()) {
             if (cin.fail()) {
                 cin.clear();
                 cin.ignore(32767, '\n');
             }
             cout << "Ошибка! Введите правильное число:" << endl;
             cin >> count;
-        }
+        }*/
         vec1.push_back(count);
-        vec2.push_back(count);
+        vec2.push_back(count);//-
     }
-    auto begin = chrono::steady_clock::now();
+    auto begin = std::chrono::steady_clock::now();
     BubbleSort(vec1, size);
-    auto end = chrono::steady_clock::now();
-    auto duration = chrono::duration_cast<chrono::microseconds>(end - begin);
-    cout << "Сортировка пузырьком\nВремя выполнения: " << duration.count() << " мкрсек\n";
-    auto begin1 = chrono::steady_clock::now();
-    sort(vec2.begin(), vec2.end());
-    auto end1 = chrono::steady_clock::now();
-    auto duration1 = chrono::duration_cast<chrono::microseconds>(end1 - begin1);
-    cout << "Сортировка sort\nВремя выполнения: " << duration1.count() << " мкрсек\n";
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);//binary search
+    std::cout << "Сортировка пузырьком\nВремя выполнения: " << duration.count() << " мкрсек\n";
+    begin = std::chrono::steady_clock::now();
+    sort(vec1.begin(), vec1.end());
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+    std::cout << "Сортировка sort\nВремя выполнения: " << duration.count() << " мкрсек\n";
     for (int i = 0; i < size; i++) {
-        cout << vec1[i] << " ";
+        std::cout << vec1[i] << " ";
     }
     return 0;
 }
