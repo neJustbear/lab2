@@ -1,9 +1,10 @@
-﻿#include <iostream>
+#include <iostream>
 #include <chrono>
 #include <vector>
 #include <algorithm>
 #include <ctime>
 #include <functional>
+#include <string>
 //using namespace std;
 
 void BubbleSort(std::vector<int> vec)//size, 
@@ -23,19 +24,19 @@ void BubbleSort(std::vector<int> vec)//size,
 // *time* clockFunc(std::function)
 //[](){}
 
-void clockFunc(std::function<void()> func) {
+long long clockFunc(const std::function<void()>& func) {
     auto begin = std::chrono::steady_clock::now();
     func();
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
-    std::cout << "Время выполнения: " << duration.count() << " мкрсек\n";
+    return duration.count();
 }
 
 int main()
 {
     setlocale(LC_ALL, "rus");
     std::vector <int> vec1;
-    double size, count, key;
+    double size, count;
     srand(time(0));
     std::cout << "Введите размер вектора:\n";
     std::cin >> size;
@@ -52,36 +53,36 @@ int main()
         count = rand();
         vec1.push_back(count);
     }
-    auto begin = std::chrono::steady_clock::now();
-    BubbleSort(vec1);
-    auto end = std::chrono::steady_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);//binary search
-    std::cout << "Сортировка пузырьком\nВремя выполнения: " << duration.count() << " мкрсек\n";
-    begin = std::chrono::steady_clock::now();
-    sort(vec1.begin(), vec1.end());
-    end = std::chrono::steady_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
-    std::cout << "Сортировка sort\nВремя выполнения: " << duration.count() << " мкрсек\n";
-    for (int i = 0; i < size; i++) {
-        std::cout << vec1[i] << " ";
+    const auto BubleSortTime = clockFunc([&vec1]() {
+        BubbleSort(vec1);
+        });
+    std::cout << "Сортировка пузырьком\nВремя выполнения: " << BubleSortTime << " мкрсек\n";
+    const auto sortTime = clockFunc([&vec1]() {
+        sort(vec1.begin(), vec1.end());
+        });
+    std::cout << "Сортировка sort\nВремя выполнения: " << sortTime << " мкрсек\n";
+    for (const auto& i : vec1) {
+        std::cout << i << " ";
     }
 
 
     std::cout << "\n";
     std::cout << "Введите ключ:\n";
-    std::cin >> key;
-    while (key != static_cast<int>(key) || std::cin.fail()) {
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(32767, '\n');
-        }
-        std::cout << "Ошибка! Введите правильное число:\n";
-        std::cin >> key;
+    std::string input;
+    int key;
+    std::cin >> input;
+    try {
+        key = std::stoi(input);
+    }
+    catch (const std::invalid_argument& ex) {
+        std::cout << ex.what() << "\n";
+        return 0;
     }
     
-    auto lambda = [vec1, key]() {bool flag = false;
+    auto lambda = [vec1, key]() {
+    bool flag = false;
     int left = 0;
-    int right = vec1.size();
+    int right = vec1.size() - 1;
     int mid;
     while ((left <= right) && (flag != true)) {
         mid = (left + right) / 2;
@@ -91,8 +92,10 @@ int main()
         else left = mid + 1;
     }
     if (flag) std::cout << "Индекс элемента " << key << " в массиве равен: " << mid << "\n";
-    else std::cout << "Извините, но такого элемента в массиве нет\n"; };
-    
-    clockFunc(lambda);
+    else std::cout << "Извините, но такого элемента в массиве нет\n"; 
+    };
+
+    const auto searhTime = clockFunc(lambda);
+    std::cout << "Время поиска: " << searhTime;
     return 0;
 }
